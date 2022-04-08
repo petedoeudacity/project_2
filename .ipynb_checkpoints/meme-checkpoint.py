@@ -30,6 +30,7 @@ def generate_meme(path=None, body=None, author=None):
                        './_data/DogQuotes/DogQuotesCSV.csv']
         quotes = []
         for f in quote_files:
+            
             print(Ingestor.parse('./_data/DogQuotes/DogQuotesTXT.txt'))
             quotes.extend(Ingestor.parse(f))
 
