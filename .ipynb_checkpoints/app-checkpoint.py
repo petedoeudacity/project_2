@@ -15,8 +15,7 @@ meme = MemeEngine('./static')
 def setup():
     """ Load all resources """
 
-    if body is None:
-        quote_files = ['./_data/DogQuotes/DogQuotesTXT.txt',
+    quote_files = ['./_data/DogQuotes/DogQuotesTXT.txt',
                    './_data/DogQuotes/DogQuotesDOCX.docx',
                    './_data/DogQuotes/DogQuotesPDF.pdf',
                    './_data/DogQuotes/DogQuotesCSV.csv']
@@ -24,19 +23,13 @@ def setup():
     # TODO: Use the Ingestor class to parse all files in the
     # quote_files variable
     
-        quotes = []
+    quotes = []
     
-        for file in quote_files:
-            quotes.append(Ingestor.parse(file))
+    for file in quote_files:
+        quotes.append(Ingestor.parse(file))
         
-        quote = random.choice(quotes)
+    quote = random.choice(quotes)
     
-    else:
-        if author is None:
-            raise Exception('Author Required if Body is Used')
-        
-        quote = QuoteModel(body, author)
-
     images_path = "./_data/photos/dog/"
 
     # TODO: Use the pythons standard library os class to find all
@@ -68,6 +61,10 @@ def meme_form():
 @app.route('/create', methods=['POST'])
 def meme_post():
     """ Create a user defined meme """
+    
+    # https://knowledge.udacity.com/questions/504424
+    # https://knowledge.udacity.com/questions/614215
+    # https://knowledge.udacity.com/questions/637910
 
     # @TODO:
     # 1. Use requests to save the image from the image_url
@@ -76,9 +73,24 @@ def meme_post():
     #    file and the body and author form paramaters.
     # 3. Remove the temporary saved image.
 
-    path = None
+    
+    t_img = "./temp_img.jpg"
+    
+    img_url = request.form['image_url']
+    img_content = requests.get(img_url,stream=True).content
+    
+    with open(t_img,'wb') as f:
+        f.write(img_content)
+        
+    quote = request.form['quote']
+    author = request.form['author']
+    
+    path = meme.make_meme(t_img, quote, author)
 
+    os.remove(t_img)
+    
     return render_template('meme.html', path=path)
+
 
 
 if __name__ == "__main__":
