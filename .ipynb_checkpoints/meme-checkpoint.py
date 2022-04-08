@@ -1,34 +1,61 @@
-import time
-from weatherService import WeatherService
+import os
+import random
 import argparse
 
-def within_time(item, start, end):
-    return item['dt'] > start and item['dt'] < end
+# @TODO Import your Ingestor and MemeEngine classes
 
+from MemeEngine import MemeEngine
 
-def makeUmbrellaDecision(city, country) -> bool:
-    current_time = time.time()
-    end_time = current_time + 12*3600
-    wx = WeatherService.getForecast(city, country)
-    wx = [x for x in wx if within_time(x, current_time, end_time)]
-    rain_probability = [x['rain']['3h'] for x in wx if 'rain' in x]
-    if len(rain_probability) > 0 and max(rain_probability) > 0.1:
-        return True
+from QuoteEngine import Ingestor, DocxIngestor, CSVIngestor, PDFIngestor, TextIngestor, QuoteModel
+
+def generate_meme(path=None, body=None, author=None):
+    """ Generate a meme given a path and a quote """
+    img = None
+    quote = None
+
+    if path is None:
+        images = "./_data/photos/dog/"
+        imgs = []
+        for root, dirs, files in os.walk(images):
+            imgs = [os.path.join(root, name) for name in files]
+
+        img = random.choice(imgs)
     else:
-        return False
+        img = path[0]
+
+    if body is None:
+        quote_files = ['./_data/DogQuotes/DogQuotesTXT.txt']
+                       #'./_data/DogQuotes/DogQuotesDOCX.docx',
+                       #'./_data/DogQuotes/DogQuotesPDF.pdf',
+                       #'./_data/DogQuotes/DogQuotesCSV.csv']
+        quotes = []
+        for f in quote_files:
+            quotes.extend(Ingestor.parse(f))
+
+        quote = random.choice(quotes)
+    else:
+        if author is None:
+            raise Exception('Author Required if Body is Used')
+        quote = QuoteModel(body, author)
+
+    meme = MemeEngine('./tmp')
+    path = meme.make_meme(img, quote.body, quote.author)
+    return path
+
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Decide if we need an umbrella.')
-    parser.add_argument('--city', type=str, default='new york',
-                        help='city to check')
-    parser.add_argument('--country', type=str, default='us',
-                        help='city to check')
+    # @TODO Use ArgumentParser to parse the following CLI arguments
+    # path - path to an image file
+    # body - quote body to add to the image
+    # author - quote author to add to the image
+    
+    parser = argparse.ArgumentParser()
+    
+    parser.add_argument('--path')
+    parser.add_argument('--body')
+    parser.add_argument('--author')
+
     args = parser.parse_args()
 
-    city=args.city
-    country=args.country
-
-    if(makeUmbrellaDecision(city, country)):
-        print(f'You need an umbrella today in {city}, {country}')
-    else:
-        print(f'You do NOT need an umbrella today in {city}, {country}')
+    
+    print(generate_meme(args.path, args.body, args.author))

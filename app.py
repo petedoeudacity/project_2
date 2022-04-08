@@ -4,6 +4,11 @@ import requests
 from flask import Flask, render_template, abort, request
 
 # @TODO Import your Ingestor and MemeEngine classes
+# 
+
+from MemeEngine import MemeEngine
+
+from QuoteEngine import Ingestor, DocxIngestor, CSVIngestor, PDFIngestor, TextIngestor, QuoteModel
 
 app = Flask(__name__)
 
@@ -13,14 +18,27 @@ meme = MemeEngine('./static')
 def setup():
     """ Load all resources """
 
-    quote_files = ['./_data/DogQuotes/DogQuotesTXT.txt',
+    if body is None:
+        quote_files = ['./_data/DogQuotes/DogQuotesTXT.txt',
                    './_data/DogQuotes/DogQuotesDOCX.docx',
                    './_data/DogQuotes/DogQuotesPDF.pdf',
                    './_data/DogQuotes/DogQuotesCSV.csv']
 
     # TODO: Use the Ingestor class to parse all files in the
     # quote_files variable
-    quotes = None
+    
+        quotes = []
+    
+        for file in quote_files:
+            quotes.append(Ingestor.parse(file))
+        
+        quote = random.choice(quotes)
+    
+    else:
+        if author is None:
+            raise Exception('Author Required if Body is Used')
+        
+        quote = QuoteModel(body, author)
 
     images_path = "./_data/photos/dog/"
 
