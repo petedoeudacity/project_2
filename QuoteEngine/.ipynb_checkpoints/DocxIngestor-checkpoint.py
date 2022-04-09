@@ -5,6 +5,8 @@ import docx
 
 class DocxIngestor(IngestorInterface):
     """DOCX strategy object."""
+    
+    @classmethod
     def parse(self, path):
         
         list_of_quotes = []

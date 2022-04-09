@@ -4,6 +4,7 @@ from .QuoteModel import QuoteModel
 class PDFIngestor(IngestorInterface):
     """PDF strategy object."""
     
+    @classmethod
     def parse(self, path):
         
         list_of_quotes = []

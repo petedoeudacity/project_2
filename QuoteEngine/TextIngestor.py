@@ -4,6 +4,7 @@ from .QuoteModel import QuoteModel
 class TextIngestor(IngestorInterface):
     """TXT strategy object."""
     
+    @classmethod
     def parse(self, path):
         
         list_of_quotes = []

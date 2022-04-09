@@ -6,6 +6,7 @@ import csv
 class CSVIngestor(IngestorInterface):
     """CSV strategy object."""
     
+    @classmethod
     def parse(self, path):
         
         list_of_quotes = []
