@@ -4,6 +4,8 @@ from .QuoteModel import QuoteModel
 class TextIngestor(IngestorInterface):
     """TXT strategy object."""
     
+    allowed_extensions = ['txt']
+    
     @classmethod
     def parse(self, path):
         

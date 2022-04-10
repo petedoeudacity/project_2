@@ -6,6 +6,8 @@ import docx
 class DocxIngestor(IngestorInterface):
     """DOCX strategy object."""
     
+    allowed_extensions = ['docx']
+    
     @classmethod
     def parse(self, path):
         

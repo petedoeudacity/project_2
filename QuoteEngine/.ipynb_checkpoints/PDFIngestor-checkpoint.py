@@ -1,31 +1,40 @@
 from .IngestorInterface import IngestorInterface
 from .QuoteModel import QuoteModel
 
+import subprocess
+import random
+import os
+
 class PDFIngestor(IngestorInterface):
     """PDF strategy object."""
+    
+    allowed_extensions = ['pdf']
     
     @classmethod
     def parse(self, path):
         
-        list_of_quotes = []
+        quotes = []
         
-        p = subprocess.run(['pdftotext', path['-']], stdout=subprocess.PIPE)
-        output, err = p.communicate()
-        
-        # output should be our text file, no?
-        
-        # If text-file is ´-’, the text is sent to stdout.
-        
-        with open(output, 'r') as infile:
-            lines_of_text = infile.readlines()
+        try:
             
-        for line in lines_of_text:
+            tmp = f'./_data/DogQuotes/{random.randint(0, 1000)}.txt'
+            call = subprocess.call(['pdftotext', path, tmp])
+            file_ref = open(tmp, "r")
             
-            dash_location = line.find('-')
+            for line in file_ref.readlines():
+                line = line.strip('\n\r').strip()
+                if len(line) > 0:
+                    parse = line.split('-')
+                    new_quote = QuoteModel(parse[0].strip(),
+                                           parse[1].strip())
+                    quotes.append(new_quote)
+            file_ref.close()
+            os.remove(tmp)
             
-            body = line[:dash_location]
-            author = line[dash_location:]
+        except Exception as e:
+            raise Exception("pdf parsing issue occured.")
             
-            list_of_quotes.append(QuoteModel(body, author))
-            
-        return list_of_quotes
+        return quotes
+    
+    
+# https://knowledge.udacity.com/questions/572306

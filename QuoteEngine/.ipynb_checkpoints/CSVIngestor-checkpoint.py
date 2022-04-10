@@ -6,6 +6,8 @@ import csv
 class CSVIngestor(IngestorInterface):
     """CSV strategy object."""
     
+    allowed_extensions = ['csv']
+    
     @classmethod
     def parse(self, path):
         

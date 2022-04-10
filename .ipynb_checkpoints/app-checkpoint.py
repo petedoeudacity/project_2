@@ -20,24 +20,26 @@ def setup():
                    './_data/DogQuotes/DogQuotesPDF.pdf',
                    './_data/DogQuotes/DogQuotesCSV.csv']
 
-    # TODO: Use the Ingestor class to parse all files in the
-    # quote_files variable
+    # parse quote_files
     
     quotes = []
     
     for file in quote_files:
-        quotes.append(Ingestor.parse(file))
+        quotes.append(Ingestor.parse(file)[0])
         
     quote = random.choice(quotes)
     
     images_path = "./_data/photos/dog/"
 
-    # TODO: Use the pythons standard library os class to find all
-    # images within the images images_path directory
-    imgs = None
+    # finding images in images_path
+    
+    imgs = []
+    
+    for file in os.listdir(images_path):
+        if file.endswith(".jpg") or file.endswith(".png"):
+            imgs.append(os.path.join(images_path, file))
 
     return quotes, imgs
-
 
 quotes, imgs = setup()
 
@@ -66,14 +68,6 @@ def meme_post():
     # https://knowledge.udacity.com/questions/614215
     # https://knowledge.udacity.com/questions/637910
 
-    # @TODO:
-    # 1. Use requests to save the image from the image_url
-    #    form param to a temp local file.
-    # 2. Use the meme object to generate a meme using this temp
-    #    file and the body and author form paramaters.
-    # 3. Remove the temporary saved image.
-
-    
     t_img = "./temp_img.jpg"
     
     img_url = request.form['image_url']
@@ -90,7 +84,6 @@ def meme_post():
     os.remove(t_img)
     
     return render_template('meme.html', path=path)
-
 
 
 if __name__ == "__main__":
